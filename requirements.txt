@@ -1,0 +1,6 @@
+SpeechRecognition>=3.10.0
+PyAudio>=0.2.14
+pyttsx3>=2.90
+pycaw>=20240210
+comtypes>=1.2.0
+vosk>=0.3.45
