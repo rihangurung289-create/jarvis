@@ -1,5 +1,14 @@
 """Configuration for the Jarvis voice assistant."""
 
+from pathlib import Path
+
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv(Path(__file__).resolve().parent / ".env")
+except ImportError:
+    pass
+
 # Speech recognition: "google" (online) or "vosk" (offline, run setup_vosk.py first)
 RECOGNITION_ENGINE = "google"
 VOSK_MODEL_PATH = "models/vosk-model-small-en-us-0.15"
@@ -59,3 +68,23 @@ GUARDIAN_OFF_HOURS_ENABLED = False
 GUARDIAN_OFF_HOURS_START = 23  # 11 PM
 GUARDIAN_OFF_HOURS_END = 6  # 6 AM
 GUARDIAN_ENROLL_SAMPLES = 2  # Voice clips collected during enrollment
+
+# Conversational AI — OpenAI API (put your key in .env as OPENAI_API_KEY=sk-...)
+ENABLE_AI_CHAT = True
+AI_PROVIDER = "openai"
+OPENAI_API_KEY = ""  # Prefer .env; this is a fallback if you paste the key here
+OPENAI_MODEL = "gpt-4o-mini"
+OLLAMA_BASE_URL = "http://localhost:11434"
+OLLAMA_MODEL = "llama3.2"
+AI_REQUEST_TIMEOUT = 30  # Seconds to wait for an AI response
+AI_MAX_HISTORY_TURNS = 6  # Remember recent back-and-forth for context
+AI_MAX_RESPONSE_WORDS = 80  # Replies are spoken aloud — keep them short
+AI_SYSTEM_PROMPT = (
+    "You are Jarvis, a friendly voice assistant on a Windows laptop. "
+    "The person speaking is {user_name}. "
+    "Keep every reply short (1–3 sentences, under {max_words} words) because "
+    "your answers are read aloud by text-to-speech. "
+    "Be warm, natural, and conversational — like a helpful friend, not a robot. "
+    "Answer questions clearly. For laptop tasks, suggest voice commands like "
+    '"{wake_word} open notepad" or "{wake_word} volume up".'
+)

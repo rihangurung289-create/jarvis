@@ -21,6 +21,7 @@ class CommandType(Enum):
     ENROLL_USER = auto()
     WHO_AM_I = auto()
     EXIT = auto()
+    CHAT = auto()
     UNKNOWN = auto()
 
 
@@ -101,7 +102,49 @@ class CommandParser:
         if app_name:
             return Command(type=CommandType.OPEN_APP, target=app_name)
 
+        if self._is_conversational(normalized):
+            return Command(type=CommandType.CHAT, target=text.strip())
+
         return Command(type=CommandType.UNKNOWN)
+
+    _CONVERSATIONAL_PHRASES = (
+        "what ",
+        "what's ",
+        "whats ",
+        "who ",
+        "how ",
+        "why ",
+        "when ",
+        "where ",
+        "which ",
+        "can you ",
+        "could you ",
+        "would you ",
+        "tell me ",
+        "explain ",
+        "describe ",
+        "do you ",
+        "is there ",
+        "are there ",
+        "help me ",
+        "hello",
+        "hi ",
+        "hey ",
+        "good morning",
+        "good afternoon",
+        "good evening",
+        "thanks",
+        "thank you",
+    )
+
+    @classmethod
+    def _is_conversational(cls, text: str) -> bool:
+        if text.endswith("?"):
+            return True
+        return any(
+            text == phrase.rstrip() or text.startswith(phrase)
+            for phrase in cls._CONVERSATIONAL_PHRASES
+        )
 
     @staticmethod
     def _matches(text: str, phrases: tuple[str, ...]) -> bool:

@@ -4,3 +4,4 @@ pyttsx3>=2.90
 pycaw>=20240210
 comtypes>=1.2.0
 vosk>=0.3.45
+python-dotenv>=1.0.0

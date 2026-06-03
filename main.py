@@ -12,10 +12,11 @@ Pipeline:
 
 import time
 
+from ai_reply import generate_reply, get_responder
 from executor import CommandExecutor
 from guardian import SecurityGuardian
 from listener import VoiceListener
-from parser import CommandParser, CommandType
+from parser import Command, CommandParser, CommandType
 from speaker import VoiceSpeaker
 from ui import create_ui
 from wake import contains_wake_word, strip_wake_word
@@ -43,7 +44,13 @@ def run() -> None:
     print(f'  "{config.WAKE_WORD} enroll user Alex"')
     print(f'  "{config.WAKE_WORD} who am i"')
     print(f'  "{config.WAKE_WORD} volume up" / "exit"')
+    print(f'  "{config.WAKE_WORD} what is the capital of France?"')
     print(f"Speech engine: {config.RECOGNITION_ENGINE}")
+    if config.ENABLE_AI_CHAT:
+        if get_responder().enabled:
+            print(f"AI chat: on (OpenAI {config.OPENAI_MODEL})")
+        else:
+            print("AI chat: enabled — add OPENAI_API_KEY to .env (see .env.example)")
     if config.REQUIRE_WAKE_WORD:
         print(f'Say "{config.WAKE_WORD}" to wake me up, then your command.')
     if config.ENABLE_WAKE_UI:
@@ -92,6 +99,9 @@ def run() -> None:
 
             command = parser.parse(command_text)
 
+            if command.type == CommandType.UNKNOWN and config.ENABLE_AI_CHAT:
+                command = Command(type=CommandType.CHAT, target=command_text)
+
             if command.type == CommandType.ENROLL_USER:
                 result = _handle_enrollment(listener, guardian, command, ui, speaker)
                 print(f"Jarvis: {result}\n")
@@ -113,6 +123,12 @@ def run() -> None:
             if verdict.blocked:
                 result = verdict.block_reason
                 ui.show("error", result)
+            elif command.type == CommandType.CHAT:
+                ui.show("processing", "Thinking…")
+                result = generate_reply(
+                    command.target or command_text,
+                    identification.display_name,
+                )
             else:
                 if verdict.incidents:
                     ui.show("processing", "Security check…")
