@@ -1,4 +1,4 @@
-#!C:\Users\rihan\OneDrive\Desktop\jarvis\venv\Scripts\python.exe
+#!C:\jarvis\venv\Scripts\python.exe
 
 """Process subtitle text content using arbitrary Python code."""
 

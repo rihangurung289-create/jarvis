@@ -1,4 +1,4 @@
-#!C:\Users\rihan\OneDrive\Desktop\jarvis\venv\Scripts\python.exe
+#!C:\jarvis\venv\Scripts\python.exe
 
 """Takes a badly formatted SRT file and outputs a strictly valid one."""
 
